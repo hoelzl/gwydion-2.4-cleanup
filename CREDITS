@@ -1,0 +1,80 @@
+The following people have at one time or another contributed to the
+Gwydion Dylan project:
+
+Gwydion Dylan Hackers (1998-today)
+==================================
+
+Alex Potanin      (alexpotanin)*
+Andreas Bogk      (andreas)*
+Patrick Beard     (beard)
+Brent Fulgham     (brent)*
+Bruce Hoult       (bruce)*
+Chris Double      (chris)*
+Chris Page        (cpage)*
+Doug Auclair     (dauclair)
+Eric M. Kidd      (emk)
+Gabor Greif       (gabor)*
+Hannes Mehnert    (hannes)*
+Peter Housel      (housel)*
+Jeff Dubrule      (igor)
+Neel Krishnaswami (neel)
+Nolan Darilek     (nolan)
+Ole J. Tetlie     (olet)
+Peter Hinely      (phinely)*
+Ingo Albrecht     (prom)*
+Rob Myers         (robmyers)
+Paul Dempster     (scotek)
+Matthias Hölzl    (tc)
+Tim Pritlove      (tim)*
+Tom Emerson       (tree)
+WASHIDA Motoi     (wm3)*
+
+The string given in parentheses is the account name used to commit to
+the source code repository.  People marked with an asterisk are
+currently active developers, and responsible for this release.
+
+Gwydion Project at the Carnegie Mellon University  (1994-1998)
+==============================================================
+
+Ben Folk-Williams  (bfw)
+Bill Chiles        (chiles)
+David Pierce       (dpierce)
+David Watson       (dwatson)
+Nick Kramer        (nkramer)
+Noah Gibbs         (panda)
+Robert Stockton    (rgs)
+Robert MacLachlan  (ram)
+Russell M. Schaaf  (rsbe)
+Scott Fahlman      (sef)
+Sean Hallgren      (hallgren)
+William Lott       (wlott)
+
+Harlequin Dylan Project
+=======================
+
+Andrew Armstrong
+Carl Gay
+David Gray
+Eliot Miranda
+Gail Zacharias
+Gary Palter
+Hugh Greene
+James Kirsch
+Jonathan Bachrach
+Jonathon Lee
+Keith Dennison
+Keith Playford
+Scott McKay
+Shri Amit
+Toby Weinberg
+
+Other people credited in the code
+===================================
+
+Gareth Baker
+Roger Critchlow
+
+
+And a numerous other people who contributed patches, ideas and bug
+reports.
+
