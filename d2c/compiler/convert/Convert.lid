@@ -14,5 +14,4 @@ deflibmod.dylan
 deffunc.dylan
 defconstvar.dylan
 defclass.dylan
-defdclass.dylan
 tlexpr.dylan
