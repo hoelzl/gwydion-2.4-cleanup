@@ -32,7 +32,7 @@ copyright: see below
 
 // Parse tree stuff.
 
-define class <define-class-parse> (<definition-parse>)
+define open primary class <define-class-parse> (<definition-parse>)
   constant slot defclass-name :: <identifier-token>,
     required-init-keyword: name:;
   constant slot defclass-superclass-exprs :: <simple-object-vector>,
@@ -60,13 +60,13 @@ define-procedural-expander
 		slots: map(extract-slot, split-fragment-at-commas(slots-frag)),
 		options: parse-property-list(make(<fragment-tokenizer>,
 						  fragment: options-frag))),
-	   source-location: generate-token-source-location(generator)));
+           source-location: generate-token-source-location(generator)));
    end method);
 
-define method extract-slot (frag :: <fragment>)
+define function extract-slot (frag :: <fragment>)
     => res :: <abstract-slot-parse>;
   if (instance?(frag, <token-fragment>)
-	& frag.fragment-token.token-kind == $error-token
+        & frag.fragment-token.token-kind == $error-token
 	& instance?(frag.fragment-token, <pre-parsed-token>)
 	& instance?(frag.fragment-token.token-parse-tree,
 		    <abstract-slot-parse>))
@@ -74,10 +74,10 @@ define method extract-slot (frag :: <fragment>)
   else
     error("bug in define class macro: %= isn't a slot parse", frag);
   end if;
-end method extract-slot;
+end function extract-slot;
 
 
-define abstract class <abstract-slot-parse> (<object>)
+define abstract open primary class <abstract-slot-parse> (<object>)
 end class <abstract-slot-parse>;
 
 define class <slot-parse> (<abstract-slot-parse>, <source-location-mixin>)
@@ -169,7 +169,7 @@ end method extract-keyword;
 
 // 
 
-define class <real-class-definition> (<class-definition>)
+define open primary class <real-class-definition> (<class-definition>)
   //
   // The <cclass> for this class definition, #f if unknown (e.g. non-constant
   // superclasses), #"not-computed-yet" if we haven't computed it yet, or
@@ -198,7 +198,7 @@ define method defn-type (defn :: <real-class-definition>) => res :: <cclass>;
   class-ctype();
 end;
 
-define class <local-class-definition> (<real-class-definition>)
+define open primary class <local-class-definition> (<real-class-definition>)
   // 
   // Vector of <expression-parse>s for the superclasses.
   constant slot class-defn-supers :: <simple-object-vector>,
@@ -450,7 +450,7 @@ define generic process-slot
      slot :: <abstract-slot-parse>)
     => ();
 
-define method process-slot
+define sealed method process-slot
     (class-name :: <symbol>, class-functional? :: <boolean>,
      slots :: <stretchy-vector>, overrides :: <stretchy-vector>, keywords :: <stretchy-vector>,
      slot :: <slot-parse>)
@@ -666,7 +666,7 @@ define method process-slot
   add!(slots, slot);
 end method process-slot;
 
-define method process-slot
+define sealed method process-slot
     (class-name :: <symbol>, class-functional? :: <boolean>,
      slots :: <stretchy-vector>, overrides :: <stretchy-vector>,
      keywords :: <stretchy-vector>, slot :: <inherited-slot-parse>)
@@ -816,6 +816,10 @@ define method ct-value (defn :: <real-class-definition>)
       defn.class-defn-cclass;
   end;
 end;
+
+define open generic compute-cclass
+    (defn :: <real-class-definition>)
+ => (class-class :: false-or(<class>), init-args :: <sequence>);
 
 define method compute-cclass (defn :: <real-class-definition>)
     => (cclass-class :: false-or(<class>), init-args :: <sequence>);
@@ -1094,7 +1098,7 @@ define method compute-cclass (defn :: <real-class-definition>)
   end if;
 end method compute-cclass;
 
-define method compute-slot (slot :: <slot-defn>) => info :: <slot-info>;
+define function compute-slot (slot :: <slot-defn>) => info :: <slot-info>;
   let getter-name = slot.slot-defn-getter-name;
   //
   // Note: we don't pass in anything for the type, init-value, or
@@ -1124,9 +1128,9 @@ define method compute-slot (slot :: <slot-defn>) => info :: <slot-info>;
       end;
   slot.slot-defn-info := info;
   info;
-end;
+end function compute-slot;
 
-define method compute-override
+define function compute-override
     (override :: <override-defn>) => info :: <override-info>;
   let getter-name = override.override-defn-getter-name;
   //
@@ -1139,9 +1143,9 @@ define method compute-override
 		  init-function: override.override-defn-init-function & #t);
   override.override-defn-info := info;
   info;
-end;
+end function compute-override;
 
-define method compute-keyword
+define function compute-keyword
     (keyword :: <keyword-defn>) => info :: <keyword-info>;
   //
   // Note: we don't pass in anything for the type, init-value, or
@@ -1154,7 +1158,7 @@ define method compute-keyword
 		  init-function: keyword.keyword-defn-init-function & #t);
   keyword.keyword-defn-info := info;
   info;
-end;
+end function compute-keyword;
 
 define generic inhibits-functional-classes?
     (slot :: <slot-info>) => res :: <boolean>;
@@ -3129,12 +3133,12 @@ define method slot-accessor-standin
   elseif (find-slot-offset(slot, slot.slot-introduced-by))
     let rep = slot.slot-representation;
     let standin-name :: false-or(<symbol>)
-      = if (rep == *general-rep*)
-	  symcat("general-rep-", kind);
-	elseif (rep == *heap-rep*)
-	  symcat("heap-rep-", kind);
-	else
-	  #f;
+      = if (rep.is-general-representation?)
+          symcat("general-rep-", kind);
+        elseif (rep.is-heap-representation?)
+          symcat("heap-rep-", kind);
+        else
+          #f;
 	end if;
     if (standin-name)
       let defn = dylan-defn(standin-name);
@@ -3159,12 +3163,12 @@ define method slot-accessor-standin // used for spew-object (cback)¥¥¥ releva
 //  if (find-slot-offset(meta-slot /*slot*/, meta-class /*slot.slot-introduced-by*/))
 /*    let rep = meta-slot.slot-representation;
     let standin-name :: false-or(<symbol>)
-      = if (rep == *general-rep*)
-	  symcat("general-rep-", kind);
-	elseif (rep == *heap-rep*)
-	  symcat("heap-rep-", kind);
-	else
-	  #f;
+      = if (rep.is-general-representation?)
+          symcat("general-rep-", kind);
+        elseif (rep.is-heap-representation?)
+          symcat("heap-rep-", kind);
+        else
+          #f;
 	end if;
     if (standin-name)
       let defn = dylan-defn(standin-name);

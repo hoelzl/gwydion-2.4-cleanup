@@ -36,6 +36,7 @@ define library compiler-convert
   use compiler-parser;
 
   export
+    lexenv, compile-time-eval, expanders,
     define-classes, define-libraries-and-modules, define-functions,
     fer-convert, top-level-expressions,
     
@@ -325,16 +326,57 @@ define module define-classes
   use abstract-optimizer;
 
   export
-    class-defn-overrides, class-defn-slots,
+    <define-class-parse>,
+    defclass-name, defclass-superclass-exprs,
+    defclass-slots, defclass-options,
+    
+    <abstract-slot-parse>, <slot-parse>,
+    slot-parse-name, slot-parse-options,
+    <inherited-slot-parse>,
+    inherited-slot-parse-name, inherited-slot-parse-options,
+    <init-arg-parse>,
+    init-arg-parse-keyword, init-arg-parse-options,
+    extract-keyword,
 
+    <real-class-definition>,
+    class-defn-cclass, 
+
+    <local-class-definition>,
+    class-defn-supers, class-defn-sealed?,
+    class-defn-abstract?, class-defn-abstract?-setter,
+    class-defn-primary?, class-defn-slots,
+    class-defn-overrides, class-defn-keywords,
+    
+    <slot-defn>, 
+    slot-defn-class, slot-defn-class-setter,
+    slot-defn-init-value, slot-defn-init-function,
+    slot-defn-info, slot-defn-info-setter,
+    slot-defn-getter-name, slot-defn-sealed?,
+    slot-defn-allocation, slot-defn-type,
+    slot-defn-getter, slot-defn-getter-setter,
+    slot-defn-setter-name,
+    slot-defn-setter, slot-defn-setter-setter,
+    slot-defn-init-keyword,
+    slot-defn-init-keyword-required?,
+    slot-defn-sizer-defn,
+
+    <override-defn>,
+    override-defn-getter-name,
+    override-defn-class, override-defn-class-setter,
     override-defn-info,
 
-    slot-defn-info, slot-defn-allocation, slot-defn-getter, slot-defn-setter,
+    <keyword-defn>,
+    keyword-defn-class, keyword-defn-class-setter,
+    keyword-defn-symbol, keyword-defn-required?,
+    keyword-defn-type,
+
+    <maker-function-definition>, <init-function-definition>,
     
-    // for browser support:
-    <slot-defn>, slot-defn-getter-name,
-    class-defn-cclass,
-    <local-class-definition>;
+    extract-slot, process-slot,
+    compute-cclass, compute-slot, compute-override, compute-keyword,
+    inhibits-functional-classes?,
+
+    $class-definition-slots;
 end;
 
 define module top-level-expressions
