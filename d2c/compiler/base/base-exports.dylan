@@ -65,6 +65,7 @@ define library compiler-base
   export signature-interface;
   export source;
   export tokens;
+  export type-dump;
   export transformers;
   export utils;
   export variables;
@@ -775,6 +776,8 @@ define module type-dump
   use compile-time-values;
   use ctype;
   use classes;
+
+  export $class-dump-slots;
 end;
 
 define module c-representation

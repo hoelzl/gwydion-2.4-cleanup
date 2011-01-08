@@ -39,7 +39,6 @@ define library compiler-cback
   export heap;
 end library;
 
-
 define module stack-analysis
   use common;
   use utils;
@@ -53,6 +52,44 @@ define module stack-analysis
   export
     analyze-stack-usage;
 end;
+
+define module ct-designator-classes
+  // TODO: Remove unused entries.
+  use common;
+
+  use utils;
+  use od-format;
+  use type-dump;
+  use errors;
+  use names;
+  use definitions;
+  use variables;
+  use compile-time-values;
+  use ctype;
+  use representation;
+  use classes;
+
+  /*
+  export
+    <cdclass>, 
+
+    size-of, alignment-of, designated-representation,
+    referenced-type, pointer-type, pointer-type-setter,
+    pointer-type-superclass,
+    import-type, export-type,
+    struct-slot-infos, struct-slot-infos-setter,
+    indirect-getter, indirect-setter,
+    
+    <defined-cdclass>,
+
+    <struct-slot-info>, 
+    
+    struct-slot-c-type, struct-slot-c-name,
+    struct-slot-offset, struct-slot-getter, struct-slot-setter,
+    struct-slot-address-getter, struct-slot-dimensions,
+    struct-slot-bitfield-width;
+    */
+end module ct-designator-classes;
 
 define module convert-designator-classes
   // TODO: Remove unused entries.
@@ -69,6 +106,7 @@ define module convert-designator-classes
   use classes;
   use compile-time-functions;
   use od-format;
+  use type-dump;
   use representation;
 
   use top-level-forms;
@@ -97,6 +135,7 @@ define module convert-designator-classes
   use abstract-optimizer;
 
   use define-classes;
+  use ct-designator-classes;
 end module convert-designator-classes;
 
 define module cback
@@ -114,6 +153,7 @@ define module cback
   use function-definitions;
   use variable-definitions;
   use define-classes;
+  use ct-designator-classes;
   use flow;
   use front;
   use names;

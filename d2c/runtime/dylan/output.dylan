@@ -99,7 +99,7 @@ end method cheap-format;
 
 
 
-define function print-message(thing :: <object>) => ()
+define function print-message(thing :: <object>) => ();
   cheap-print-message(thing, #"Cheap-IO");
 end function print-message;
 
@@ -107,20 +107,29 @@ define generic cheap-print-message
     (thing :: <object>, fake-stream :: <symbol>) => ();
 
 define method cheap-print-message
-    (str :: <byte-string>, fake-stream :: <symbol>) => ()
+    (str :: <byte-string>, fake-stream :: <symbol>) => ();
   fputs(str, fake-stream);
 end;
 
 define method cheap-print-message
-    (sym :: <symbol>, fake-stream :: <symbol>) => ()
+    (sym :: <symbol>, fake-stream :: <symbol>) => ();
   fputs(as(<string>, sym), fake-stream);
 end;
 
 define method cheap-print-message
-    (cond :: <condition>, fake-stream :: <symbol>) => ()
+    (cond :: <condition>, fake-stream :: <symbol>) => ();
   report-condition(cond, fake-stream);
 end;
 
+define method cheap-print-message
+    (true :: <true>, fake-stream :: <symbol>) => ();
+  fputs("#t", fake-stream);
+end;
+
+define method cheap-print-message
+    (false :: <false>, fake-stream :: <symbol>) => ();
+  fputs("#f", fake-stream);
+end;
 
 
 define function print (thing :: <object>) => ()

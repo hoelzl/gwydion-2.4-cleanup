@@ -206,6 +206,18 @@ define class <slot-descriptor> (<object>)
     init-value: #f;
 end;
 
+define method cheap-print-object
+    (sd :: <slot-descriptor>, fake-stream :: <symbol>) => ();
+  cheap-format(fake-stream, "{%s; slot-name: %s}",
+               sd.object-class.class-name,
+               sd.slot-name);
+end method cheap-print-object;
+
+define method cheap-print-message
+    (sd :: <slot-descriptor>, fake-stream :: <symbol>) => ();
+  cheap-format(fake-stream, "%s", sd.slot-name);
+end method cheap-print-message;
+
 /*
 define method initialize
     (slot :: <slot-descriptor>,
@@ -445,8 +457,14 @@ define method find-slot-offset (class :: <class>, slot :: <slot-descriptor>)
       end if;
     end for;
     let positions = slot.slot-positions;
-    if (positions.tail == #())
-      return(slot.slot-positions-cache := positions.head.tail);
+    if (~positions.empty? & positions.tail == #())
+      let position = positions.head.tail;
+      if (instance?(position, type-union(<integer>, singleton(#"data-word"))))
+        return(slot.slot-positions-cache := position);
+      else
+        signal("find-slot-offset: bad position in %=.",
+               positions);
+      end if;
     end if;
     for (entry :: <list> in positions)
       let entry-class :: <class> = entry.head;

@@ -63,7 +63,7 @@ position-table
 define variable *All-Classes* :: <stretchy-vector> = make(<stretchy-vector>);
 
 
-define abstract class <cclass> (<ctype>, <eql-ct-value>)
+define abstract open class <cclass> (<ctype>, <eql-ct-value>)
   //
   // The name, for printing purposes.
   constant slot cclass-name :: <name>, required-init-keyword: name:;
@@ -204,8 +204,8 @@ define abstract class <cclass> (<ctype>, <eql-ct-value>)
     required-init-keyword: metaclass:;
 end class;
 
-define sealed domain make (singleton(<cclass>));
-define sealed domain initialize (<cclass>);
+// define sealed domain make (singleton(<cclass>));
+// define sealed domain initialize (<cclass>);
 
 define method initialize
     (class :: <cclass>, #next next-method,
@@ -1893,13 +1893,13 @@ end;
 
 // Defined classes.
 
-define class <defined-cclass> (<cclass>)
+define open class <defined-cclass> (<cclass>)
   //
   // The <class-definition> that installed this class.
   slot class-defn :: <class-definition>, init-keyword: defn:;
 end class;
 
-define sealed domain make (singleton(<defined-cclass>));
+// define sealed domain make (singleton(<defined-cclass>));
 
 
 // Limited mumble classes.

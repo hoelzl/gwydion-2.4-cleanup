@@ -5,6 +5,7 @@ unique-id-base: 10750
 shared-library: no
 
 cback-exports.dylan
+cdclass.dylan
 defdclass.dylan
 cback.dylan
 primemit.dylan
