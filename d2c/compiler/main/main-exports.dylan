@@ -62,6 +62,8 @@ define module main
   use option-parser-protocol;
    
   use utils;
+  use backend;
+  use compilation-unit;
   use variables;
   use definitions;
   use variable-definitions;

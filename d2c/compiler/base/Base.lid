@@ -10,6 +10,7 @@ utils.dylan
 od-format.dylan
 dylan-dump.dylan
 backend.dylan
+compilation-unit.dylan
 ctv.dylan
 source.dylan
 tokens.dylan
