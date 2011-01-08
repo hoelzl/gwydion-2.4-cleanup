@@ -46,6 +46,11 @@ define class <single-file-mode-state> (<main-unit-state>)
   slot unit-stream = #f;
 end class <single-file-mode-state>;
 
+define method unit-locator
+    (state :: <single-file-mode-state>) => (locator :: <byte-string>);
+  state.unit-source-file;
+end method unit-locator;
+
 define method parse-and-finalize-library (state :: <single-file-mode-state>) => ();
   let source = make(<source-file>, name: state.unit-source-file);
   let (header, start-line, start-posn) = parse-header(source);

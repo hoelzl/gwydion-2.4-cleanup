@@ -14,5 +14,6 @@ single-file-mode-state.dylan
 lid-mode-state.dylan
 testworks-spec.dylan
 misc.dylan
+options.dylan
 evaluate.dylan
 main.dylan
