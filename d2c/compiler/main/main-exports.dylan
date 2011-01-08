@@ -32,6 +32,8 @@ define library compiler-main
   use Dylan;
   use String-extensions;
   use Random;
+  use debugger;
+  use command-processor;
   use parse-arguments;
   use compiler-base;
   use compiler-front;
@@ -111,4 +113,6 @@ define module main
   use platform-constants;
   use file-system;
   use extensions, import: {key-exists?};
+  use command-processor;
+  use debugger;
 end;

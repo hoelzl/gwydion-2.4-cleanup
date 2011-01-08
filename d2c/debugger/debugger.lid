@@ -1,6 +1,6 @@
 library: debugger
-executable: debugger
-linker-options: -Wl,-E
+executable-not: debugger
+linker-options: -export-dynamic
 files: exports
        introspection
        dlfcn

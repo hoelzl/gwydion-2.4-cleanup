@@ -210,6 +210,9 @@ define function set-up-argument-list-parser (argp :: <argument-list-parser>) => 
 			    long-options: #("log-deps"),
 			    short-options: #("M"));
   add-option-parser-by-type(argp,
+			    <simple-option-parser>,
+			    long-options: #("dump-du"));
+  add-option-parser-by-type(argp,
 			    <parameter-option-parser>,
 			    long-options: #("target"),
 			    short-options: #("T"));
@@ -263,6 +266,9 @@ define function set-up-argument-list-parser (argp :: <argument-list-parser>) => 
 			    <parameter-option-parser>,
 			    long-options: #("debug-optimizer",
 					    "dump-transforms"));
+  add-option-parser-by-type(argp,
+			    <simple-option-parser>,
+			    long-options: #("debug-compiler"));
   add-option-parser-by-type(argp,
 			    <repeated-parameter-option-parser>,
 			    long-options: #("optimizer-option"),

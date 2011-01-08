@@ -4,15 +4,15 @@ $D2CFLAGS         # added by update-libdirs
     . ' -L../../../common/print'
     . ' -L../../../common/format'
     . ' -L../../../common/standard-io'
-    . ' -L../../../common/table-ext'
-    . ' -L../../../common/getopt'
     . ' -L.'
+    . ' -L../../../common/table-ext'
     . ' -L../../../common/collection-extensions'
     . ' -L../../../common/string-ext'
     . ' -L../../../common/regular-expressions'
     . ' -L../../../common/threads'
     . ' -L../../../d2c/runtime/random'
     . ' -L../../../common/common-dylan'
+    . ' -L../../../common/getopt'
     . ' -L../../../common/format-out'
     . ' -L../../../common/io';
 

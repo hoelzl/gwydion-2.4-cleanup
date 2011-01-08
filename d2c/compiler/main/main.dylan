@@ -28,7 +28,11 @@ copyright: see below
 //
 //======================================================================
 
-    
+define constant <file-locator> = <byte-string>;
+define constant <directory-locator> = <byte-string>;
+define constant locator-extension = filename-extension;
+
+
 //----------------------------------------------------------------------
 // Where to find various important files.
 //----------------------------------------------------------------------
@@ -72,7 +76,22 @@ define constant $runtime-include-dir
   = concatenate($dylan-dir, "/include");
 
 #endif
+define class <interactive-debugger> (<debugger>)
+end class <interactive-debugger>;
 
+define method invoke-debugger
+    (debugger :: <interactive-debugger>, condition :: <condition>)
+    => res :: <never-returns>;
+  fresh-line(*debug-output*);
+  format(*debug-output*, "%s\n", condition);
+  force-output(*debug-output*);
+  make(<command>, name: "Break", summary: "Break out of command processor.",
+       command: method(x) invoke-debugger(*old-debugger*, condition) end);
+  run-command-processor();
+  call-out("abort", void:);
+end;
+  
+define variable *old-debugger* = *debugger*;
 
 //----------------------------------------------------------------------
 // Main
@@ -94,7 +113,7 @@ define method main (argv0 :: <byte-string>, #rest args) => ();
 
   // Set up our argument parser with a description of the available options.
   let argp = make(<argument-list-parser>);
-  set-up-argument-list-parser(argp);
+  set-up-argument-list-parser(argp); 
 
   // Parse our command-line arguments.
   unless(parse-arguments(argp, args))
@@ -117,6 +136,7 @@ define method main (argv0 :: <byte-string>, #rest args) => ();
   let library-dirs = option-value-by-long-name(argp, "libdir");
   let features = option-value-by-long-name(argp, "define");
   let log-dependencies = option-value-by-long-name(argp, "log-deps");
+  let log-text-du = option-value-by-long-name(argp, "dump-du");
   let no-binaries-pre = option-value-by-long-name(argp, "no-binaries");
   let no-makefile = option-value-by-long-name(argp, "no-makefile");
   let no-binaries = no-binaries-pre | no-makefile;
@@ -141,6 +161,10 @@ define method main (argv0 :: <byte-string>, #rest args) => ();
     debug-optimizer := string-to-integer(debug-optimizer);
   else
     debug-optimizer := 0;
+  end if;
+
+  if(option-value-by-long-name(argp, "debug-compiler"))
+       *debugger* := make(<interactive-debugger>);
   end if;
 
   let dump-testworks-spec? = option-value-by-long-name(argp, "testworks-spec");
@@ -187,7 +211,7 @@ define method main (argv0 :: <byte-string>, #rest args) => ();
   if (targets-file == #f)
     error("Can't find platforms.descr");
   end if;
-  parse-platforms-file(targets-file);
+  parse-platforms-file(as(<file-locator>, targets-file));
   *current-target* := get-platform-named(target-machine);
 
   define-platform-constants(*current-target*);
@@ -211,7 +235,10 @@ define method main (argv0 :: <byte-string>, #rest args) => ();
     push-last(library-dirs, dir);
   end for;
   		       
-  *Data-Unit-Search-Path* := as(<simple-object-vector>, library-dirs);
+  *Data-Unit-Search-Path*
+       := map-as(<simple-object-vector>,
+                 curry(as, <directory-locator>),
+                 library-dirs);
 
   if (option-value-by-long-name(argp, "compiler-info"))
     show-compiler-info(*standard-output*);
@@ -249,46 +276,68 @@ define method main (argv0 :: <byte-string>, #rest args) => ();
 #endif
 
   // Process our regular arguments
+
+
   let args = regular-arguments(argp);
+
+  local method build-file(locator :: <file-locator>)
+          let state
+            = if(locator.locator-extension = "dylan")
+                format(*standard-output*, "Entering single file mode.\n");
+                force-output(*standard-output*);
+                make(<single-file-mode-state>,
+                     source-file: locator,
+                     command-line-features: as(<list>, features), 
+                     log-dependencies: log-dependencies,
+                     log-text-du: log-text-du,
+                     target: *current-target*,
+                     no-binaries: no-binaries,
+                     no-makefile: no-makefile,
+                     link-static: link-static,
+                     link-rpath: link-rpath,
+                     debug?: debug?,
+                     profile?: profile?);
+              else
+                make(<lid-mode-state>,
+                     lid-file: locator,
+                     command-line-features: as(<list>, features), 
+                     log-dependencies: log-dependencies,
+                     log-text-du: log-text-du,
+                     target: *current-target*,
+                     no-binaries: no-binaries,
+                     no-makefile: no-makefile,
+                     link-static: link-static,
+                     link-rpath: link-rpath,
+                     debug?: debug?,
+                     profile?: profile?,
+                     dump-testworks-spec?: dump-testworks-spec?,
+                     cc-override: cc-override,
+                     override-files: as(<list>, override-files),
+                     thread-count: thread-count);
+              end if;
+          compile-library(state);
+        end method build-file;
+
+  if (option-value-by-long-name(argp, "interactive")
+        | args.size = 0)
+    make(<command>, name: "Build",
+         summary: "Build specified library.",
+         command: method(filename)
+                      let locator = as(<file-locator>, filename);
+                      build-file(locator);
+                  end);
+    run-command-processor();
+    exit();
+  end if;
+
+  // Process our regular arguments
   unless (args.size = 1)
     show-usage-and-exit();
   end unless;
 
-  let lid-file = args[0];
+  let lid-locator = as(<file-locator>, args[0]);
 
-  let state
-      = if(lid-file.filename-extension = ".dylan")
-          format(*standard-output*, "Entering single file mode.\n");
-          force-output(*standard-output*);
-          make(<single-file-mode-state>,
-               source-file: lid-file,
-               command-line-features: as(<list>, features), 
-               log-dependencies: log-dependencies,
-               target: *current-target*,
-               no-binaries: no-binaries,
-               no-makefile: no-makefile,
-               link-static: link-static,
-               link-rpath: link-rpath,
-               debug?: debug?,
-               profile?: profile?);
-        else
-          make(<lid-mode-state>,
-               lid-file: lid-file,
-               command-line-features: as(<list>, features), 
-               log-dependencies: log-dependencies,
-               target: *current-target*,
-               no-binaries: no-binaries,
-               no-makefile: no-makefile,
-               link-static: link-static,
-               link-rpath: link-rpath,
-               debug?: debug?,
-               profile?: profile?,
-               dump-testworks-spec?: dump-testworks-spec?,
-               cc-override: cc-override,
-               override-files: as(<list>, override-files),
-	       thread-count: thread-count);
-        end if;
-  let worked? = compile-library(state);
+  let worked? = build-file(lid-locator);
   exit(exit-code: if (worked?) 0 else 1 end);
 end method main;
 
