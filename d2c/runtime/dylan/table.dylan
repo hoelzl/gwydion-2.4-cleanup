@@ -603,7 +603,7 @@ define inline sealed method element
       case
         ~item    // the if() will collapse at compile-time
           => if (default == $not-supplied)
-               table-element-not-found-error();
+               table-element-not-found-error(key);
              else 
                default;
              end if;
@@ -734,8 +734,8 @@ end method remove-key!;
 
 
 
-define function table-element-not-found-error() => ()
-  error("Element not found");
+define function table-element-not-found-error (key :: <object>) => ();
+  error("Element %= not found.", key);
 end;
 
 
