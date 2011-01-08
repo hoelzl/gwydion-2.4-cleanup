@@ -395,6 +395,7 @@ define module backend
 
   export
     <compiler-backend>,
+    all-compiler-backends, all-compiler-backend-names,
     compiler-backend, compiler-backend-setter;
 end;
 
@@ -477,6 +478,11 @@ define module errors
     compiler-error, compiler-error-location, *errors*,
     compiler-fatal-error, compiler-fatal-error-location,
     extract-source;
+
+  export
+    <internal-condition>,
+    <internal-warning>, <internal-error>,
+    internal-warning, internal-error;
 end module;
 
 define module signature-interface
