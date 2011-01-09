@@ -99,10 +99,6 @@ define variable *old-debugger* = *debugger*;
 
 define method main (argv0 :: <byte-string>, #rest args) => ();
   #if (~mindy)
-  no-core-dumps();
-  #endif
-
-  #if (~mindy)
   c-decl("extern int GC_expand_hp(size_t number_of_bytes);");
   unless (getenv("D2C_SMALL_MACHINE"))
     c-expr(void: "GC_expand_hp(384*1024*1024)");
@@ -252,32 +248,6 @@ define method main (argv0 :: <byte-string>, #rest args) => ();
     enable-sanity-checks();
   end if;
 
-#if(~mindy)
-  if (option-value-by-long-name(argp, "interactive"))
-    let finished? = #f;
-    while(~ finished?)
-      format(*standard-output*, "gwydion> ");
-      force-output(*standard-output*);
-      let line = read-line(*standard-input*, on-end-of-stream: #f);
-      if(line)
-        block()
-          evaluate(line, $empty-environment);
-        exception(condition :: <condition>)
-          report-condition(condition, *standard-output*);
-          format(*standard-output*, "\n");
-        end block;
-      else
-        finished? := #t;
-        format(*standard-output*, "\n");
-      end if;
-    end while;
-    exit();
-  end if;
-#endif
-
-  // Process our regular arguments
-
-
   let args = regular-arguments(argp);
 
   local method build-file(locator :: <file-locator>)
@@ -286,7 +256,7 @@ define method main (argv0 :: <byte-string>, #rest args) => ();
                 format(*standard-output*, "Entering single file mode.\n");
                 force-output(*standard-output*);
                 make(<single-file-mode-state>,
-                     source-file: locator,
+                     source-locator: locator,
                      command-line-features: as(<list>, features), 
                      log-dependencies: log-dependencies,
                      log-text-du: log-text-du,
@@ -299,7 +269,7 @@ define method main (argv0 :: <byte-string>, #rest args) => ();
                      profile?: profile?);
               else
                 make(<lid-mode-state>,
-                     lid-file: locator,
+                     lid-locator: locator,
                      command-line-features: as(<list>, features), 
                      log-dependencies: log-dependencies,
                      log-text-du: log-text-du,

@@ -29,7 +29,7 @@ copyright: see below
 //======================================================================
 
 define class <single-file-mode-state> (<main-unit-state>)
-  slot unit-source-file :: <byte-string>, required-init-keyword: source-file:;
+  slot unit-source-file :: <byte-string>, required-init-keyword: source-locator:;
   
   slot unit-name :: <byte-string>; // for single files, name == module == library == executable
   slot unit-lib :: <library>;

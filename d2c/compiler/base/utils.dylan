@@ -682,6 +682,33 @@ end method key-of;
 define sealed domain key-of(<object>, <vector>);
 define sealed domain key-of(<object>, <list>);
 
+// as-argument-list -- exported
+//
+// Turn a collection into a sequence that can be used as argument list
+// to apply.  If the collection is already a sequence we assume that
+// it is already in the correct form..
+// 
+define open generic as-argument-list
+    (collection :: <collection>) => (plist :: <sequence>);
+
+define method as-argument-list
+    (sequence :: <sequence>) => (plist :: <sequence>);
+  sequence;
+end method as-argument-list;
+
+define method as-argument-list
+    (table :: <explicit-key-collection>) => (plist :: <sequence>);
+  let args = make(<stretchy-vector>);
+  for (v keyed-by k in table)
+    add!(args, k);
+    add!(args, v);
+  end for;
+  args;
+end method as-argument-list;
+
+define sealed domain as-argument-list (<sequence>);
+define sealed domain as-argument-list (<table>);
+
 define method list?(obj);
   instance?(obj, <list>);
 end;

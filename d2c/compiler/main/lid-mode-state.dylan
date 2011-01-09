@@ -29,7 +29,7 @@ copyright: see below
 //======================================================================
 
 define class <lid-mode-state> (<main-unit-state>)
-  slot unit-lid-file :: <byte-string>, required-init-keyword: lid-file:;
+  slot unit-lid-file :: <byte-string>, required-init-keyword: lid-locator:;
   
   // A facility for hacking around C compiler bugs by using a different
   // command for particular C compilations.  cc-override is a format string

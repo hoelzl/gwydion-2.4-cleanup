@@ -123,7 +123,7 @@ define module utils
     integer-to-english, ordinal-suffix,
     find-in, size-in,
     dformat, 
-    find, find-member,
+    find, find-member, as-argument-list,
     <annotatable>, info, info-setter,
     key-of, list?, pair?,
     symcat, stringify,
