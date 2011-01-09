@@ -9,7 +9,7 @@ utils.dylan
 32bit-od-format.dylan
 od-format.dylan
 dylan-dump.dylan
-backend.dylan
+compiler.dylan
 compilation-unit.dylan
 ctv.dylan
 source.dylan

@@ -46,7 +46,7 @@ define library compiler-base
     rename: { base-file-system => file-system },
     export: all;
   
-  export backend;
+  export compiler;
   export c-representation;
   export classes;
   export common;
@@ -122,8 +122,8 @@ define module utils
     current-column, fresh-line,
     integer-to-english, ordinal-suffix,
     find-in, size-in,
-    find,
     dformat, 
+    find, find-member,
     <annotatable>, info, info-setter,
     key-of, list?, pair?,
     symcat, stringify,
@@ -392,27 +392,35 @@ define module header
     header-add, header-add-new, header-concatenate;
 end;
 
-define module backend
+define module compiler
   use common;
   use utils;
   use errors;
 
   export
-    <compiler-backend>,
-    backend-name,
-    find-backend, register-compiler-backend,
-    all-compiler-backends, all-compiler-backend-names,
-    compiler-backend, compiler-backend-setter;
-end;
+    <compiler>,
+    configuration,
+    active-frontend, active-frontend-setter,
+    all-frontends, all-frontends-setter,
+    find-frontend, register-frontend,
+    active-backend, active-backend-setter,
+    all-backends, all-backends-setter,
+    find-backend, register-backend,
 
-define module compilation-unit
-  use common;
-  use utils;
-  use errors;
+    active-compiler, active-compiler-setter,
+    all-frontend-names, all-backend-names;
+
+  export
+    <compiler-frontend>, <compiler-frontend-designator>,
+    frontend-name, frontend-name-setter;
+
+  export
+    <compiler-backend>, <compiler-backend-designator>,
+    backend-name, backend-name-setter;
 
   export <compilation-unit>;
   export <compilation-unit-state>;
-end module compilation-unit;
+end;
 
 define module platform
   use common;
